@@ -17,7 +17,7 @@ COPY . .
 # Создаем скрипт запуска
 RUN echo '#!/bin/bash\n\
 echo "Starting services..."\n\
-python -m http.server ${PORT:-8080} & \
+python server.py & \
 python bot.py\n\
 wait' > /app/start.sh
 
