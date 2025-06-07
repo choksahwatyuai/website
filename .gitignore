@@ -3,8 +3,6 @@ __pycache__/
 session_data.pickle
 cookies.json
 .env
-bot.py
-session_manager.py
-download_images.ps1
 venv/
-.idea/ 
+.idea/
+download_images.ps1 
