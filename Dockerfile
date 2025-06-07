@@ -1,5 +1,10 @@
 FROM python:3.9-slim
 
+# Установка необходимых пакетов
+RUN apt-get update && apt-get install -y \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Установка зависимостей
@@ -9,15 +14,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копирование файлов проекта
 COPY . .
 
-# Установка Python HTTP сервера
-RUN pip install http.server
+# Создаем скрипт запуска
+RUN echo '#!/bin/bash\n\
+echo "Starting services..."\n\
+python -m http.server ${PORT:-8080} & \
+python bot.py\n\
+wait' > /app/start.sh
 
-# Открываем порт
-EXPOSE 8080
+# Делаем скрипт исполняемым
+RUN chmod +x /app/start.sh
 
-# Создаем скрипт для запуска обоих процессов
-RUN echo '#!/bin/bash\npython -m http.server 8080 & python bot.py' > start.sh
-RUN chmod +x start.sh
+# Указываем порт
+EXPOSE ${PORT:-8080}
 
-# Запускаем оба процесса
-CMD ["./start.sh"] 
+# Запускаем сервисы
+CMD ["/app/start.sh"] 
