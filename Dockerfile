@@ -16,16 +16,22 @@ COPY . .
 
 # Создаем скрипт запуска
 RUN echo '#!/bin/bash\n\
-echo "Starting services..."\n\
+echo "Starting web server..."\n\
 python server.py & \
-python bot.py\n\
-wait' > /app/start.sh
+echo "Starting Telegram bot..."\n\
+python bot.py' > /app/start.sh
 
 # Делаем скрипт исполняемым
 RUN chmod +x /app/start.sh
 
+# Проверяем наличие всех необходимых файлов
+RUN ls -la && \
+    echo "Content of start.sh:" && \
+    cat /app/start.sh
+
 # Указываем порт
-EXPOSE ${PORT:-8080}
+ENV PORT=8080
+EXPOSE 8080
 
 # Запускаем сервисы
-CMD ["/app/start.sh"] 
+CMD ["/bin/bash", "/app/start.sh"] 
