@@ -10,7 +10,10 @@ WORKDIR /app
 
 # Установка зависимостей
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Добавляем метку времени для предотвращения кэширования
+ARG CACHEBUST=1
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir telethon==1.33.1
 
 # Копирование файлов проекта
 COPY . .
@@ -34,10 +37,12 @@ wait $SERVER_PID $BOT_PID' > /app/start.sh
 # Делаем скрипт исполняемым
 RUN chmod +x /app/start.sh
 
-# Проверяем наличие всех необходимых файлов
+# Проверяем наличие всех необходимых файлов и зависимостей
 RUN ls -la && \
     echo "Content of start.sh:" && \
-    cat /app/start.sh
+    cat /app/start.sh && \
+    echo "Installed packages:" && \
+    pip list
 
 # Указываем порт
 ENV PORT=8080

@@ -1,10 +1,8 @@
 import logging
-import asyncio
 import os
 from dotenv import load_dotenv
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-from session_manager import SessionManager
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -17,11 +15,6 @@ logging.basicConfig(
 
 # Конфигурация
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-API_ID = int(os.getenv('API_ID', '25461352'))
-API_HASH = os.getenv('API_HASH', '3033f0733762a0415d6d80ce885525d6')
-
-# Создаем менеджер сессий
-session_manager = SessionManager(API_ID, API_HASH)
 
 # Клавиатура для основного меню
 MAIN_KEYBOARD = ReplyKeyboardMarkup([
@@ -179,8 +172,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         await update.message.reply_text(response, parse_mode='Markdown')
 
-async def run_bot():
-    """Запуск бота"""
+async def main():
+    """Основная функция"""
     # Создаём приложение бота
     application = Application.builder().token(TOKEN).build()
 
@@ -197,28 +190,12 @@ async def run_bot():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Запускаем бота
+    print("Starting bot...")
     await application.initialize()
     await application.start()
     await application.run_polling(allowed_updates=Update.ALL_TYPES)
 
-async def main():
-    """Основная функция"""
-    try:
-        # Инициализируем сессию Telethon
-        await session_manager.get_client()
-        print("Сессия Telethon инициализирована")
-        
-        # Запускаем бота
-        print("Запуск бота Cerbera Odollam...")
-        await run_bot()
-    except Exception as e:
-        print(f"Ошибка: {e}")
-    finally:
-        if session_manager:
-            await session_manager.close()
-
-if __name__ == '__main__':
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("Бот остановлен") 
+if __name__ == "__main__":
+    import asyncio
+    print("Initializing bot...")
+    asyncio.run(main()) 
