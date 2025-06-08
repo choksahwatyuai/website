@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наши клиенты - Cerbera Odollam</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Стили для навигации */
+        .nav-menu {
+            background: #2c3e50;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #3498db;
+        }
+
+        /* Улучшенные стили для сетки клиентов */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .client-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .client-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .client-content {
+            padding: 1.5rem;
+        }
+
+        .client-name {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .client-details {
+            color: #34495e;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .client-meta {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .page-title {
+            text-align: center;
+            padding: 2rem;
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin: 0;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
+        body {
+            background: #f8f9fa;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .telegram-info {
+            background: #27A7E7;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+            z-index: 1000;
+        }
+        .telegram-info a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .telegram-info a:hover {
+            text-decoration: underline;
+        }
+        .telegram-button {
+            display: inline-block;
+            background: #229ED9;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+        .telegram-button:hover {
+            background: #1C87BC;
+            text-decoration: none !important;
+        }
+        .footer-telegram {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="telegram-info">
+        🤖 Наш оператор в Telegram: <a href="https://t.me/CerberaOdollam_bot" class="telegram-button">@CerberaOdollam_bot</a>
+    </div>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="index.html">Cerbera Odollam</a></li>
+                <li><a href="clients.html" class="active">Наши клиенты</a></li>
+                <li><a href="about.html">О проекте</a></li>
+                <li><a href="kaligraf/index.html">Калиграф</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h1 class="page-title">Наши Клиенты</h1>
+    
+    <div class="clients-grid">
+        <!-- Валерий Пашкевич -->
+        <div class="client-card">
+            <img src="images/customer/valerij-pashkevich.jpg" alt="Валерий Пашкевич" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Валерий Пашкевич</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Бизнесмен<br>
+                    <strong>Локация:</strong> Харьков
+                </p>
+                <div class="client-meta">
+                    Успешный бизнесмен из Харькова. После его внезапного ухода бизнес перешел к более достойным наследникам.
+                </div>
+            </div>
+        </div>
+
+        <!-- Олег Горелов -->
+        <div class="client-card">
+            <img src="images/customer/Горелов_Олег_Сергеевич.jpg" alt="Олег Горелов" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Олег Сергеевич Горелов</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Руководитель<br>
+                    <strong>Локация:</strong> Россия
+                </p>
+                <div class="client-meta">
+                    Бывший руководитель крупной компании. Его наследники смогли эффективно распорядиться полученными активами.
+                </div>
+            </div>
+        </div>
+
+        <!-- Коробко -->
+        <div class="client-card">
+            <img src="images/customer/Korobko_jpg_small_2.jpg" alt="Коробко" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Коробко</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Предприниматель<br>
+                    <strong>Локация:</strong> Харьков
+                </p>
+                <div class="client-meta">
+                    Известный предприниматель из Харькова. После его скоропостижного ухода бизнес был успешно передан наследникам.
+                </div>
+            </div>
+        </div>
+
+        <!-- Дополнительные клиенты с фотографиями -->
+        <div class="client-card">
+            <img src="images/customer/company-kharkov.png" alt="Харьковский бизнесмен" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Харьковский предприниматель</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Владелец компании<br>
+                    <strong>Локация:</strong> Харьков
+                </p>
+                <div class="client-meta">
+                    Владелец успешной компании в Харькове. Наследники получили процветающий бизнес.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 4 -->
+        <div class="client-card">
+            <img src="images/customer/irina_polyakova.jpg" alt="Ирина Полякова" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Ирина Полякова</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Бизнесвумен<br>
+                    <strong>Год:</strong> 2017<br>
+                    <strong>Локация:</strong> Москва, Россия
+                </p>
+                <div class="client-meta">
+                    Успешный риелтор элитной недвижимости. Скончалась после делового обеда. Всё имущество унаследовал племянник, с которым ранее конфликтовала.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 5 -->
+        <div class="client-card">
+            <img src="images/customer/42f461ff25b5592c0b17b9ffbae9f76300a34866.jpg" alt="Клиент 5" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Руслан Умаров</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Импортёр автомобилей<br>
+                    <strong>Год:</strong> 2015<br>
+                    <strong>Локация:</strong> Дагестан
+                </p>
+                <div class="client-meta">
+                    Крупный автомобильный импортёр. Скончался после деловой поездки в Москву. Бизнес перешёл к брату и отцу, позже был переведён в оффшор.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 6 -->
+        <div class="client-card">
+            <img src="images/customer/sddefault.jpg" alt="Клиент 6" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Геннадий Зиновьев</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Директор завода<br>
+                    <strong>Год:</strong> 2008<br>
+                    <strong>Локация:</strong> Санкт-Петербург, Россия
+                </p>
+                <div class="client-meta">
+                    Руководитель машиностроительного завода. Скончался после делового мероприятия. Имущество унаследовал сын от первого брака.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 7 -->
+        <div class="client-card">
+            <img src="images/customer/artworks-000105168317-88ovzl-t240x240.jpg" alt="Клиент 7" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Аслан С.</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Владелец сети магазинов<br>
+                    <strong>Год:</strong> 2010<br>
+                    <strong>Локация:</strong> Тбилиси, Грузия
+                </p>
+                <div class="client-meta">
+                    Владелец сети магазинов электроники. Скончался после семейного ужина. Бизнес перешёл к брату и племянникам.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 8 -->
+        <div class="client-card">
+            <img src="images/customer/06be28e7a74bc69de6b84b3d0559041d.jpeg" alt="Клиент 8" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Татьяна Л.</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Владелица клиники<br>
+                    <strong>Год:</strong> 2019<br>
+                    <strong>Локация:</strong> Алматы, Казахстан
+                </p>
+                <div class="client-meta">
+                    Известный косметолог и владелица клиники. Скончалась после процедуры на выставке. Клиника перешла к мужу и дочери.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 9 -->
+        <div class="client-card">
+            <img src="images/customer/hq720.jpg" alt="Клиент 9" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Роберт Аветисян</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Строительный подрядчик<br>
+                    <strong>Год:</strong> 2012<br>
+                    <strong>Локация:</strong> Армения
+                </p>
+                <div class="client-meta">
+                    Крупный строительный подрядчик. Скончался во сне при подозрительных обстоятельствах. Имущество унаследовала жена.
+                </div>
+            </div>
+        </div>
+
+        <!-- Клиент 10 -->
+        <div class="client-card">
+            <img src="images/customer/3ac4f98dd9226dfbcfe4ebd86e079896" alt="Клиент 10" class="client-image">
+            <div class="client-content">
+                <h2 class="client-name">Юрий Д.</h2>
+                <p class="client-details">
+                    <strong>Статус:</strong> Владелец агробизнеса<br>
+                    <strong>Год:</strong> 2014<br>
+                    <strong>Локация:</strong> Краснодар, Россия
+                </p>
+                <div class="client-meta">
+                    Владелец фермерских угодий. Скончался после встречи с потенциальными покупателями. Бизнес унаследовали сестра и племянники.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background-color: #2F3B44; color: white; padding: 20px 0;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <div>
+                    <p style="font-size: 1.1em;">© 2024 Робот-Каллиграф</p>
+                    <p style="color: #B0B0B0;">Информация представлена исключительно в образовательных целях</p>
+                </div>
+                <div style="text-align: right;">
+                    <p>🌿 Безопасность и конфиденциальность</p>
+                    <p>📱 Поддержка 24/7</p>
+                </div>
+            </div>
+            <div style="text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <p style="margin-bottom: 10px;">💬 Для быстрой связи и консультаций используйте нашего Telegram-бота:</p>
+                <p style="margin-bottom: 10px;"><a href="https://t.me/CerberaOdollam_bot" style="color: #3B9EFF; text-decoration: none;">@CerberaOdollam_bot</a></p>
+                <p>🕒 Мгновенные ответы | ✅ Безопасные сделки | 🔒 100% анонимность</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
