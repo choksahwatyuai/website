@@ -12,9 +12,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Устанавливаем зависимости без кэширования
-RUN pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir telethon==1.33.1 && \
-    pip list | grep telethon
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем остальные файлы проекта
 COPY . .
@@ -35,7 +33,7 @@ if ! curl -f http://localhost:${PORT:-8080}/health; then\n\
 fi\n\
 \n\
 echo "Server is healthy, starting bot..."\n\
-python bot.py & BOT_PID=$!\n\
+python -u bot.py & BOT_PID=$!\n\
 \n\
 # Функция для корректного завершения процессов\n\
 cleanup() {\n\

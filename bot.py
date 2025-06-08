@@ -15,6 +15,8 @@ logging.basicConfig(
 
 # Конфигурация
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+if not TOKEN:
+    raise ValueError("No TELEGRAM_BOT_TOKEN found in environment variables!")
 
 # Клавиатура для основного меню
 MAIN_KEYBOARD = ReplyKeyboardMarkup([
