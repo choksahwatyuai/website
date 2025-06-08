@@ -8,14 +8,15 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Установка зависимостей
+# Копируем сначала только requirements.txt
 COPY requirements.txt .
-# Добавляем метку времени для предотвращения кэширования
-ARG CACHEBUST=1
-RUN pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir telethon==1.33.1
 
-# Копирование файлов проекта
+# Устанавливаем зависимости без кэширования
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir telethon==1.33.1 && \
+    pip list | grep telethon
+
+# Копируем остальные файлы проекта
 COPY . .
 
 # Создаем скрипт запуска
