@@ -22,14 +22,29 @@ COPY . .
 RUN echo '#!/bin/bash\n\
 echo "Starting web server..."\n\
 python server.py & SERVER_PID=$!\n\
-echo "Starting Telegram bot..."\n\
-python bot.py & BOT_PID=$!\n\
 \n\
-# Ждем инициализации сервера\n\
+# Ждем запуска сервера\n\
+echo "Waiting for server to start..."\n\
 sleep 5\n\
 \n\
-# Проверяем, что сервер отвечает\n\
-curl -f http://localhost:${PORT:-8080}/health || exit 1\n\
+# Проверяем доступность сервера\n\
+if ! curl -f http://localhost:${PORT:-8080}/health; then\n\
+    echo "Server health check failed"\n\
+    exit 1\n\
+fi\n\
+\n\
+echo "Server is healthy, starting bot..."\n\
+python bot.py & BOT_PID=$!\n\
+\n\
+# Функция для корректного завершения процессов\n\
+cleanup() {\n\
+    echo "Shutting down..."\n\
+    kill $SERVER_PID $BOT_PID 2>/dev/null\n\
+    exit 0\n\
+}\n\
+\n\
+# Перехватываем сигналы завершения\n\
+trap cleanup SIGTERM SIGINT\n\
 \n\
 # Ждем завершения процессов\n\
 wait $SERVER_PID $BOT_PID' > /app/start.sh
@@ -47,6 +62,10 @@ RUN ls -la && \
 # Указываем порт
 ENV PORT=8080
 EXPOSE 8080
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8080}/health || exit 1
 
 # Запускаем сервисы
 CMD ["/bin/bash", "/app/start.sh"] 
