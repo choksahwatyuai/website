@@ -336,4 +336,38 @@ footer {
 
 .nav-links a.active {
     background-color: #e74c3c;
+}
+
+.telegram-info {
+    background: #27A7E7;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    position: relative;
+    z-index: 1000;
+}
+
+.telegram-info a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.telegram-info a:hover {
+    text-decoration: underline;
+}
+
+.telegram-button {
+    display: inline-block;
+    background: #229ED9;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    margin-left: 10px;
+    transition: background 0.3s;
+}
+
+.telegram-button:hover {
+    background: #1C87BC;
+    text-decoration: none !important;
 } 

@@ -21,10 +21,6 @@ TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 if not TOKEN:
     raise ValueError("No TELEGRAM_BOT_TOKEN found in environment variables!")
 
-WEBHOOK_URL = os.getenv('WEBHOOK_URL')
-if not WEBHOOK_URL:
-    raise ValueError("No WEBHOOK_URL found in environment variables!")
-
 # Клавиатура для основного меню
 MAIN_KEYBOARD = ReplyKeyboardMarkup([
     ['🌿 О Cerbera Odollam', '📦 Доставка'],
@@ -145,9 +141,9 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def contact_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /contact"""
     contact_text = (
-        "📞 *Контактная информация* 📞\n\n"
+        "📱 *Как с нами связаться* 📱\n\n"
         "*Для заказа и консультаций:*\n"
-        "• Телефон: +66817045097\n"
+        "• Оставьте свой контакт для связи в этом чате\n"
         "• Время работы: 24/7\n"
         "• Конфиденциальность гарантируется\n\n"
         "💡 _Отвечаем в течение часа_"
@@ -199,26 +195,13 @@ def main():
         # Добавляем обработчик текстовых сообщений
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        # Настраиваем webhook
-        webhook_url = os.getenv('WEBHOOK_URL')
-        port = int(os.getenv('PORT', 8080))
-        
-        if webhook_url:
-            logger.info(f"Starting bot in webhook mode on port {port}...")
-            application.run_webhook(
-                listen="0.0.0.0",
-                port=port,
-                webhook_url=webhook_url,
-                drop_pending_updates=True
-            )
-        else:
-            # Fallback to polling mode if no webhook URL is set
-            logger.info("Starting bot in polling mode...")
-            application.run_polling(drop_pending_updates=True)
+        # Запускаем бота в режиме polling
+        logger.info("Starting bot in polling mode...")
+        application.run_polling(drop_pending_updates=True)
         
     except Exception as e:
         logger.error(f"Error starting bot: {e}")
         raise
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main() 
