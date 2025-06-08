@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import logging
 import os
 from dotenv import load_dotenv
@@ -12,6 +13,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
+logger = logging.getLogger(__name__)
 
 # Конфигурация
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -174,30 +176,30 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         await update.message.reply_text(response, parse_mode='Markdown')
 
-async def main():
+def main():
     """Основная функция"""
-    # Создаём приложение бота
-    application = Application.builder().token(TOKEN).build()
+    try:
+        # Создаём приложение бота
+        application = Application.builder().token(TOKEN).build()
 
-    # Добавляем обработчики команд
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("about", about_command))
-    application.add_handler(CommandHandler("delivery", delivery_command))
-    application.add_handler(CommandHandler("effects", effects_command))
-    application.add_handler(CommandHandler("history", history_command))
-    application.add_handler(CommandHandler("contact", contact_command))
-    
-    # Добавляем обработчик текстовых сообщений
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+        # Добавляем обработчики команд
+        application.add_handler(CommandHandler("start", start))
+        application.add_handler(CommandHandler("help", help_command))
+        application.add_handler(CommandHandler("about", about_command))
+        application.add_handler(CommandHandler("delivery", delivery_command))
+        application.add_handler(CommandHandler("effects", effects_command))
+        application.add_handler(CommandHandler("history", history_command))
+        application.add_handler(CommandHandler("contact", contact_command))
+        
+        # Добавляем обработчик текстовых сообщений
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    # Запускаем бота
-    print("Starting bot...")
-    await application.initialize()
-    await application.start()
-    await application.run_polling(allowed_updates=Update.ALL_TYPES)
+        # Запускаем бота
+        logger.info("Starting bot...")
+        application.run_polling(allowed_updates=Update.ALL_TYPES)
+    except Exception as e:
+        logger.error(f"Error starting bot: {e}")
+        raise
 
 if __name__ == "__main__":
-    import asyncio
-    print("Initializing bot...")
-    asyncio.run(main()) 
+    main() 
