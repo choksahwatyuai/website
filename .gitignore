@@ -5,4 +5,8 @@ cookies.json
 .env
 venv/
 .idea/
-download_images.ps1 
+download_images.ps1
+*.log
+.DS_Store
+start_bot.ps1
+node_modules/ 

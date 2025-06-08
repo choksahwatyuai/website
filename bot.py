@@ -3,7 +3,7 @@ import logging
 import os
 from dotenv import load_dotenv
 import config  # Импортируем конфигурацию
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 # Загружаем переменные окружения
@@ -141,18 +141,22 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def contact_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /contact"""
     contact_text = (
-        "📱 *Как с нами связаться* 📱\n\n"
+        "📞 *Контактная информация* 📞\n\n"
         "*Для заказа и консультаций:*\n"
-        "• Оставьте свой контакт для связи в этом чате\n"
+        "• Телефон: +66817045097\n"
         "• Время работы: 24/7\n"
         "• Конфиденциальность гарантируется\n\n"
         "💡 _Отвечаем в течение часа_"
     )
-    await update.message.reply_text(contact_text, parse_mode='Markdown')
+    await update.message.reply_text(contact_text, parse_mode='Markdown', reply_markup=MAIN_KEYBOARD)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик всех текстовых сообщений"""
     text = update.message.text.lower()
+    
+    if text == '🔙 назад':
+        await start(update, context)
+        return
     
     if "доставка" in text or "📦" in text:
         await delivery_command(update, context)

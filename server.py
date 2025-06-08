@@ -1,74 +1,34 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from flask import Flask, send_from_directory, jsonify
 import os
-import json
 import logging
-import requests
+from datetime import datetime
 
-# Настраиваем логирование
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+app = Flask(__name__)
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/health':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            response = {"status": "ok"}
-            self.wfile.write(json.dumps(response).encode())
-            return
-        elif self.path == '/webhook':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            response = {"ok": True}
-            self.wfile.write(json.dumps(response).encode())
-            return
+start_time = datetime.now()
 
-    def do_POST(self):
-        if self.path == '/webhook':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            
-            # Отправляем 200 OK сразу
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({"ok": True}).encode())
-            
-            # Логируем полученные данные
-            logger.info(f"Received webhook data: {post_data.decode('utf-8')}")
-            
-            # Пересылаем данные боту
-            bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-            if bot_token:
-                try:
-                    webhook_data = json.loads(post_data.decode('utf-8'))
-                    chat_id = webhook_data['message']['chat']['id']
-                    text = webhook_data['message']['text']
-                    
-                    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-                    response = requests.post(api_url, json={
-                        'chat_id': chat_id,
-                        'text': f"Получено сообщение: {text}"
-                    })
-                    logger.info(f"Bot response: {response.json()}")
-                except Exception as e:
-                    logger.error(f"Error processing webhook data: {str(e)}")
+@app.route('/health')
+def health():
+    uptime = (datetime.now() - start_time).total_seconds()
+    return jsonify({
+        'status': 'healthy',
+        'uptime': uptime,
+        'web_server': True,
+        'timestamp': datetime.now().isoformat()
+    }), 200
 
-def run(port=8080):
-    server_address = ('', port)
-    httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
-    logger.info(f'Starting server on port {port}...')
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        logger.info('Shutting down server...')
-        httpd.server_close()
+@app.route('/')
+def index():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/<path:path>')
+def serve_file(path):
+    return send_from_directory('.', path)
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 8080))
-    run(port) 
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port) 
