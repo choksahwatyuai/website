@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# Добавляем метку времени для предотвращения кэширования
+ARG CACHEBUST=$(date +%s)
+RUN echo "Cache bust: $CACHEBUST"
+
 # Копируем сначала только requirements.txt
 COPY requirements.txt .
 
@@ -16,6 +20,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем остальные файлы проекта
 COPY . .
+
+# Удаляем ненужные файлы
+RUN rm -f session_data.pickle session_manager.py
 
 # Создаем скрипт запуска
 RUN echo '#!/bin/bash\n\
@@ -56,7 +63,9 @@ RUN ls -la && \
     echo "Content of start.sh:" && \
     cat /app/start.sh && \
     echo "Installed packages:" && \
-    pip list
+    pip list && \
+    echo "Files in /app:" && \
+    ls -la /app
 
 # Указываем порт
 ENV PORT=8080

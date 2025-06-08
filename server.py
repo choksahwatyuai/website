@@ -4,13 +4,17 @@ import json
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/health' or self.path == '/':
+        if self.path == '/health':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response = {"status": "ok"}
             self.wfile.write(json.dumps(response).encode())
             return
+        
+        # Если запрошен корневой путь, отдаем index.html
+        if self.path == '/':
+            self.path = '/index.html'
         
         # Обработка остальных запросов
         try:
