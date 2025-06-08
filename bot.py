@@ -199,9 +199,22 @@ def main():
         # Добавляем обработчик текстовых сообщений
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        # Запускаем бота в режиме polling
-        logger.info("Starting bot in polling mode...")
-        application.run_polling(drop_pending_updates=True)
+        # Настраиваем webhook
+        webhook_url = os.getenv('WEBHOOK_URL')
+        port = int(os.getenv('PORT', 8080))
+        
+        if webhook_url:
+            logger.info(f"Starting bot in webhook mode on port {port}...")
+            application.run_webhook(
+                listen="0.0.0.0",
+                port=port,
+                webhook_url=webhook_url,
+                drop_pending_updates=True
+            )
+        else:
+            # Fallback to polling mode if no webhook URL is set
+            logger.info("Starting bot in polling mode...")
+            application.run_polling(drop_pending_updates=True)
         
     except Exception as e:
         logger.error(f"Error starting bot: {e}")
