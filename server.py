@@ -2,6 +2,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import os
 import json
 import logging
+import requests
 
 # Настраиваем логирование
 logging.basicConfig(
@@ -63,9 +64,29 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"ok": True}).encode())
                 
-                logger.info(f"Received webhook: {post_data.decode('utf-8')}")
+                # Логируем полученные данные
+                logger.info(f"Received webhook data: {post_data.decode('utf-8')}")
+                
+                # Пересылаем данные боту
+                bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+                if bot_token:
+                    try:
+                        webhook_data = json.loads(post_data.decode('utf-8'))
+                        chat_id = webhook_data['message']['chat']['id']
+                        text = webhook_data['message']['text']
+                        
+                        # Отправляем эхо-ответ для тестирования
+                        api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+                        response = requests.post(api_url, json={
+                            'chat_id': chat_id,
+                            'text': f"Получено сообщение: {text}"
+                        })
+                        logger.info(f"Bot response: {response.json()}")
+                    except Exception as e:
+                        logger.error(f"Error processing webhook data: {str(e)}")
+                
             except Exception as e:
-                logger.error(f"Error processing webhook: {str(e)}")
+                logger.error(f"Error handling webhook: {str(e)}")
                 self.send_error(500, 'Internal Server Error')
             return
 

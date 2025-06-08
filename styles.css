@@ -141,6 +141,51 @@ footer {
     margin-top: 2rem;
     position: relative;
     z-index: 1;
+    border-radius: 0 0 15px 15px;
+}
+
+.footer-telegram {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    backdrop-filter: blur(5px);
+}
+
+.footer-telegram p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.footer-telegram p:last-child {
+    margin-bottom: 0;
+}
+
+.footer-telegram a {
+    color: #27A7E7;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.footer-telegram a:hover {
+    color: #1C87BC;
+    text-decoration: underline;
+}
+
+.footer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-copyright {
+    font-size: 0.9rem;
+    opacity: 0.8;
 }
 
 .image-gallery {
@@ -174,6 +219,33 @@ footer {
     
     .image-gallery {
         grid-template-columns: 1fr;
+    }
+
+    footer {
+        padding: 1.5rem;
+    }
+
+    .footer-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-telegram {
+        padding: 1rem;
+    }
+
+    .footer-telegram p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    footer {
+        padding: 1rem;
+    }
+
+    .footer-telegram {
+        margin-top: 1rem;
     }
 }
 

@@ -2,6 +2,7 @@
 import logging
 import os
 from dotenv import load_dotenv
+import config  # Импортируем конфигурацию
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
@@ -198,16 +199,10 @@ def main():
         # Добавляем обработчик текстовых сообщений
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        # Настраиваем webhook
-        port = int(os.getenv('PORT', 8080))
-        logger.info(f"Setting webhook to {WEBHOOK_URL}")
-        application.run_webhook(
-            listen="0.0.0.0",
-            port=port,
-            webhook_url=WEBHOOK_URL,
-            secret_token="your-secret-path",  # Добавляем секретный токен
-            drop_pending_updates=True  # Игнорируем старые обновления
-        )
+        # Запускаем бота в режиме polling
+        logger.info("Starting bot in polling mode...")
+        application.run_polling(drop_pending_updates=True)
+        
     except Exception as e:
         logger.error(f"Error starting bot: {e}")
         raise

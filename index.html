@@ -53,6 +53,7 @@
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Cerbera Odollam</a></li>
                 <li><a href="clients.html">Наши клиенты</a></li>
+                <li><a href="about.html">О проекте</a></li>
                 <li><a href="kaligraf/index.html">Калиграф</a></li>
             </ul>
         </div>
@@ -165,13 +166,37 @@
             </section>
         </main>
 
-        <footer>
-            <p>© 2024 Информация о Cerbera Odollam | Внимание: Информация представлена исключительно в образовательных целях</p>
-            <div class="footer-telegram">
-                <p>💬 Для быстрой связи и консультаций используйте нашего Telegram-бота: <a href="https://t.me/CerberaOdollam_bot">@CerberaOdollam_bot</a></p>
-                <p>🕒 Работаем 24/7 | ✅ Быстрые ответы | 🔒 Конфиденциальность</p>
+        <footer style="background-color: #2F3B44; color: white; padding: 20px 0;">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div>
+                        <p style="font-size: 1.1em;">© 2024 Робот-Каллиграф</p>
+                        <p style="color: #B0B0B0;">Информация представлена исключительно в образовательных целях</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p>🌿 Безопасность и конфиденциальность</p>
+                        <p>📱 Поддержка 24/7</p>
+                    </div>
+                </div>
+                <div style="text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                    <p style="margin-bottom: 10px;">💬 Для быстрой связи и консультаций используйте нашего Telegram-бота:</p>
+                    <p style="margin-bottom: 10px;"><a href="https://t.me/CerberaOdollam_bot" style="color: #3B9EFF; text-decoration: none;">@CerberaOdollam_bot</a></p>
+                    <p>🕒 Мгновенные ответы | ✅ Безопасные сделки | 🔒 100% анонимность</p>
+                </div>
             </div>
         </footer>
     </div>
+
+    <script>
+        // Добавляем плавную прокрутку для всех внутренних ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html> 
