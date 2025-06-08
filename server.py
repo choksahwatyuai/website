@@ -11,23 +11,29 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             response = {"status": "ok"}
             self.wfile.write(json.dumps(response).encode())
             return
-        
-        # Если запрошен корневой путь, отдаем index.html
-        if self.path == '/':
-            self.path = '/index.html'
-        
-        # Обработка остальных запросов
+
+        # Если запрошен корневой путь или конкретная страница
         try:
-            file_path = os.path.join(os.getcwd(), self.path.lstrip('/'))
+            # Определяем путь к файлу
+            if self.path == '/':
+                file_path = os.path.join(os.getcwd(), 'index.html')
+            else:
+                file_path = os.path.join(os.getcwd(), self.path.lstrip('/'))
+
+            # Проверяем существование файла
             if os.path.exists(file_path) and os.path.isfile(file_path):
                 with open(file_path, 'rb') as file:
                     self.send_response(200)
-                    if self.path.endswith('.html'):
-                        self.send_header('Content-type', 'text/html')
-                    elif self.path.endswith('.css'):
+                    if file_path.endswith('.html'):
+                        self.send_header('Content-type', 'text/html; charset=utf-8')
+                    elif file_path.endswith('.css'):
                         self.send_header('Content-type', 'text/css')
-                    elif self.path.endswith('.js'):
+                    elif file_path.endswith('.js'):
                         self.send_header('Content-type', 'application/javascript')
+                    elif file_path.endswith('.jpg') or file_path.endswith('.jpeg'):
+                        self.send_header('Content-type', 'image/jpeg')
+                    elif file_path.endswith('.png'):
+                        self.send_header('Content-type', 'image/png')
                     self.end_headers()
                     self.wfile.write(file.read())
             else:
