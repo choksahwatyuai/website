@@ -199,12 +199,14 @@ def main():
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
         # Настраиваем webhook
+        port = int(os.getenv('PORT', 8080))
         logger.info(f"Setting webhook to {WEBHOOK_URL}")
         application.run_webhook(
             listen="0.0.0.0",
-            port=int(os.getenv('PORT', 8080)),
+            port=port,
             webhook_url=WEBHOOK_URL,
-            url_path="webhook"
+            secret_token="your-secret-path",  # Добавляем секретный токен
+            drop_pending_updates=True  # Игнорируем старые обновления
         )
     except Exception as e:
         logger.error(f"Error starting bot: {e}")

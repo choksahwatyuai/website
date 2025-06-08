@@ -1,6 +1,14 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import os
 import json
+import logging
+
+# Настраиваем логирование
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -39,17 +47,36 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 self.send_error(404, 'File not found')
         except Exception as e:
-            print(f"Error serving {self.path}: {str(e)}")
+            logger.error(f"Error serving {self.path}: {str(e)}")
             self.send_error(500, 'Internal Server Error')
+
+    def do_POST(self):
+        # Обработка webhook от Telegram
+        if self.path == '/webhook':
+            try:
+                content_length = int(self.headers['Content-Length'])
+                post_data = self.rfile.read(content_length)
+                
+                # Отправляем 200 OK сразу
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"ok": True}).encode())
+                
+                logger.info(f"Received webhook: {post_data.decode('utf-8')}")
+            except Exception as e:
+                logger.error(f"Error processing webhook: {str(e)}")
+                self.send_error(500, 'Internal Server Error')
+            return
 
 def run(port=8080):
     server_address = ('', port)
     httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
-    print(f'Starting server on port {port}...')
+    logger.info(f'Starting server on port {port}...')
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print('Shutting down server...')
+        logger.info('Shutting down server...')
         httpd.server_close()
 
 if __name__ == '__main__':
