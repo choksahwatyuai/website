@@ -180,6 +180,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     """Основная функция"""
     try:
+        # Получаем URL для вебхука
+        WEBHOOK_URL = os.getenv('WEBHOOK_URL')
+        if not WEBHOOK_URL:
+            raise ValueError("No WEBHOOK_URL found in environment variables!")
+
         # Создаём приложение бота
         application = Application.builder().token(TOKEN).build()
 
@@ -195,12 +200,18 @@ def main():
         # Добавляем обработчик текстовых сообщений
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        # Запускаем бота в режиме polling
-        logger.info("Starting bot in polling mode...")
-        application.run_polling(drop_pending_updates=True)
-        
+        # Настраиваем вебхук
+        port = int(os.getenv('PORT', 8080))
+        logger.info(f"Starting webhook on port {port}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=port,
+            webhook_url=WEBHOOK_URL,
+            drop_pending_updates=True
+        )
+
     except Exception as e:
-        logger.error(f"Error starting bot: {e}")
+        logger.error(f"Error: {e}")
         raise
 
 if __name__ == '__main__':
