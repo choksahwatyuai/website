@@ -20,6 +20,10 @@ TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 if not TOKEN:
     raise ValueError("No TELEGRAM_BOT_TOKEN found in environment variables!")
 
+WEBHOOK_URL = os.getenv('WEBHOOK_URL')
+if not WEBHOOK_URL:
+    raise ValueError("No WEBHOOK_URL found in environment variables!")
+
 # Клавиатура для основного меню
 MAIN_KEYBOARD = ReplyKeyboardMarkup([
     ['🌿 О Cerbera Odollam', '📦 Доставка'],
@@ -194,9 +198,14 @@ def main():
         # Добавляем обработчик текстовых сообщений
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        # Запускаем бота
-        logger.info("Starting bot...")
-        application.run_polling(allowed_updates=Update.ALL_TYPES)
+        # Настраиваем webhook
+        logger.info(f"Setting webhook to {WEBHOOK_URL}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=int(os.getenv('PORT', 8080)),
+            webhook_url=WEBHOOK_URL,
+            url_path="webhook"
+        )
     except Exception as e:
         logger.error(f"Error starting bot: {e}")
         raise
