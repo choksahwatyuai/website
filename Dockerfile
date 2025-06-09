@@ -4,6 +4,7 @@ FROM python:3.9-slim
 RUN apt-get update && apt-get install -y \
     bash \
     curl \
+    tree \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -24,9 +25,16 @@ RUN chmod -R 755 /app
 RUN rm -f session_data.pickle session_manager.py
 
 # Проверяем наличие всех необходимых файлов
-RUN ls -la && \
-    echo "Files in /app:" && \
-    ls -la /app
+RUN echo "=== Directory Structure ===" && \
+    tree /app && \
+    echo "\n=== File Permissions ===" && \
+    ls -la /app && \
+    echo "\n=== HTML Files ===" && \
+    find /app -name "*.html" && \
+    echo "\n=== CSS Files ===" && \
+    find /app -name "*.css" && \
+    echo "\n=== Image Files ===" && \
+    find /app -type f -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" -o -name "*.webp" -o -name "*.ico" -o -name "*.jfif"
 
 # Указываем порт
 ENV PORT=8080

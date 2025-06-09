@@ -6,10 +6,25 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Настройка логирования
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 start_time = datetime.now()
+
+def list_directory_contents():
+    """Вспомогательная функция для вывода содержимого директории"""
+    current_dir = os.getcwd()
+    logger.info(f"Current working directory: {current_dir}")
+    
+    for root, dirs, files in os.walk(current_dir):
+        logger.info(f"\nDirectory: {root}")
+        if dirs:
+            logger.info(f"Subdirectories: {dirs}")
+        if files:
+            logger.info(f"Files: {files}")
 
 @app.route('/health')
 def health():
@@ -23,45 +38,67 @@ def health():
 
 @app.route('/')
 def index():
+    logger.info("Attempting to serve index.html")
     try:
+        # Проверяем наличие файла
+        if not os.path.exists('index.html'):
+            logger.error("index.html not found!")
+            list_directory_contents()
+            return "index.html not found", 404
+            
+        logger.info("Found index.html, attempting to read")
         with open('index.html', 'r', encoding='utf-8') as f:
             content = f.read()
-        return render_template_string(content)
+        logger.info("Successfully read index.html")
+        return content
     except Exception as e:
-        logger.error(f"Error serving index.html: {e}")
-        return "Error loading page", 500
+        logger.error(f"Error serving index.html: {str(e)}")
+        list_directory_contents()
+        return f"Error loading page: {str(e)}", 500
 
 @app.route('/<path:filename>')
 def serve_file(filename):
+    logger.info(f"Attempting to serve: {filename}")
     try:
         if filename.endswith('.html'):
+            if not os.path.exists(filename):
+                logger.error(f"{filename} not found!")
+                list_directory_contents()
+                return f"{filename} not found", 404
+                
             with open(filename, 'r', encoding='utf-8') as f:
                 content = f.read()
-            return render_template_string(content)
+            return content
+            
         elif filename.endswith('.css'):
             return send_from_directory('.', filename, mimetype='text/css')
+            
         elif filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.ico', '.jfif')):
-            # Ищем файл в разных директориях
             possible_paths = ['.', 'images', 'backgrounds', 'kaligraf']
             for path in possible_paths:
-                try:
-                    if os.path.exists(os.path.join(path, filename)):
-                        return send_from_directory(path, filename)
-                except Exception:
-                    continue
+                full_path = os.path.join(path, filename)
+                if os.path.exists(full_path):
+                    logger.info(f"Found {filename} in {path}")
+                    return send_from_directory(path, filename)
+            
+            logger.error(f"Image {filename} not found in any directory")
+            list_directory_contents()
+            return f"Image {filename} not found", 404
+            
         return send_from_directory('.', filename)
     except Exception as e:
-        logger.error(f"Error serving {filename}: {e}")
-        return "File not found", 404
+        logger.error(f"Error serving {filename}: {str(e)}")
+        list_directory_contents()
+        return f"Error: {str(e)}", 404
 
 @app.errorhandler(404)
 def not_found(e):
     logger.error(f"404 error: {e}")
+    list_directory_contents()
     return "Page not found", 404
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    logger.info(f"Starting server on port {port}")
-    logger.info(f"Working directory: {os.getcwd()}")
-    logger.info(f"Available files: {os.listdir('.')}")
+    logger.info("Starting server...")
+    list_directory_contents()
     app.run(host='0.0.0.0', port=port) 
