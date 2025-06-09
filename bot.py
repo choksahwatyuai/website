@@ -28,6 +28,12 @@ MAIN_KEYBOARD = ReplyKeyboardMarkup([
     ['📞 Контакт', '❓ Помощь']
 ], resize_keyboard=True)
 
+# Клавиатура для запроса контакта
+CONTACT_KEYBOARD = ReplyKeyboardMarkup([
+    [KeyboardButton('📱 Поделиться контактом', request_contact=True)],
+    ['🔙 Назад']
+], resize_keyboard=True)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
     welcome_message = (
@@ -140,15 +146,29 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def contact_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /contact"""
-    contact_text = (
-        "📞 *Контактная информация* 📞\n\n"
-        "*Для заказа и консультаций:*\n"
-        "• Телефон: +66817045097\n"
-        "• Время работы: 24/7\n"
-        "• Конфиденциальность гарантируется\n\n"
-        "💡 _Отвечаем в течение часа_"
+    await update.message.reply_text(
+        "📱 *Поделитесь своим контактом* 📱\n\n"
+        "Нажмите кнопку ниже, чтобы поделиться контактом.\n"
+        "Мы свяжемся с вами в течение часа.\n\n"
+        "💡 _Ваши данные надежно защищены_",
+        parse_mode='Markdown',
+        reply_markup=CONTACT_KEYBOARD
     )
-    await update.message.reply_text(contact_text, parse_mode='Markdown', reply_markup=MAIN_KEYBOARD)
+
+async def handle_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обработчик полученных контактов"""
+    contact = update.message.contact
+    user = update.message.from_user
+    
+    logger.info(f"Получен контакт от пользователя {user.username} (ID: {user.id})")
+    
+    await update.message.reply_text(
+        "✅ *Спасибо за ваш контакт!*\n\n"
+        "Мы свяжемся с вами в ближайшее время.\n"
+        "_Ваши данные защищены и не будут переданы третьим лицам._",
+        parse_mode='Markdown',
+        reply_markup=MAIN_KEYBOARD
+    )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик всех текстовых сообщений"""
@@ -158,14 +178,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await start(update, context)
         return
     
+    if "контакт" in text or "связь" in text or "📞" in text:
+        await contact_command(update, context)
+        return
+    
     if "доставка" in text or "📦" in text:
         await delivery_command(update, context)
     elif "эффект" in text or "действие" in text or "💊" in text:
         await effects_command(update, context)
     elif "история" in text or "📝" in text:
         await history_command(update, context)
-    elif "контакт" in text or "связь" in text or "📞" in text:
-        await contact_command(update, context)
     elif "cerbera" in text or "одоллам" in text or "🌿" in text:
         await about_command(update, context)
     else:
@@ -184,11 +206,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     """Основная функция"""
     try:
-        # Получаем URL для вебхука
-        WEBHOOK_URL = os.getenv('WEBHOOK_URL')
-        if not WEBHOOK_URL:
-            raise ValueError("No WEBHOOK_URL found in environment variables!")
-
         # Создаём приложение бота
         application = Application.builder().token(TOKEN).build()
 
@@ -201,18 +218,14 @@ def main():
         application.add_handler(CommandHandler("history", history_command))
         application.add_handler(CommandHandler("contact", contact_command))
         
+        # Добавляем обработчик контактов (должен быть перед обработчиком текста)
+        application.add_handler(MessageHandler(filters.CONTACT, handle_contact))
+        
         # Добавляем обработчик текстовых сообщений
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        # Настраиваем вебхук
-        port = int(os.getenv('PORT', 8080))
-        logger.info(f"Starting webhook on port {port}")
-        application.run_webhook(
-            listen="0.0.0.0",
-            port=port,
-            webhook_url=WEBHOOK_URL,
-            drop_pending_updates=True
-        )
+        # Запускаем бота
+        application.run_polling(drop_pending_updates=True)
 
     except Exception as e:
         logger.error(f"Error: {e}")
