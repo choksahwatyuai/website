@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, render_template
 import os
 import logging
 from datetime import datetime
@@ -23,12 +23,31 @@ def health():
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        logger.error(f"Error serving index.html: {e}")
+        return "Error loading page", 500
 
-@app.route('/<path:path>')
-def serve_file(path):
-    return send_from_directory('.', path)
+@app.route('/<path:filename>')
+def serve_file(filename):
+    try:
+        if filename.endswith('.html'):
+            return render_template(filename)
+        return send_from_directory('static', filename)
+    except Exception as e:
+        logger.error(f"Error serving {filename}: {e}")
+        return "File not found", 404
+
+@app.errorhandler(404)
+def not_found(e):
+    logger.error(f"404 error: {e}")
+    return "Page not found", 404
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
+    logger.info(f"Starting server on port {port}")
+    logger.info(f"Working directory: {os.getcwd()}")
+    logger.info(f"Files in static: {os.listdir('static')}")
+    logger.info(f"Files in templates: {os.listdir('templates')}")
     app.run(host='0.0.0.0', port=port) 
