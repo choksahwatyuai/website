@@ -14,13 +14,8 @@ COPY requirements.txt .
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Создаем необходимые директории
-RUN mkdir -p static templates
-
-# Копируем файлы проекта
-COPY static/ static/
-COPY templates/ templates/
-COPY server.py bot.py config.py ./
+# Копируем все файлы проекта
+COPY . .
 
 # Убеждаемся, что все файлы имеют правильные права доступа
 RUN chmod -R 755 /app
@@ -31,11 +26,7 @@ RUN rm -f session_data.pickle session_manager.py
 # Проверяем наличие всех необходимых файлов
 RUN ls -la && \
     echo "Files in /app:" && \
-    ls -la /app && \
-    echo "Files in /app/static:" && \
-    ls -la /app/static && \
-    echo "Files in /app/templates:" && \
-    ls -la /app/templates
+    ls -la /app
 
 # Указываем порт
 ENV PORT=8080

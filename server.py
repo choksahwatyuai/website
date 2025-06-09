@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, jsonify, render_template
+from flask import Flask, send_from_directory, jsonify, render_template_string
 import os
 import logging
 from datetime import datetime
@@ -24,7 +24,9 @@ def health():
 @app.route('/')
 def index():
     try:
-        return render_template('index.html')
+        with open('index.html', 'r', encoding='utf-8') as f:
+            content = f.read()
+        return render_template_string(content)
     except Exception as e:
         logger.error(f"Error serving index.html: {e}")
         return "Error loading page", 500
@@ -33,8 +35,21 @@ def index():
 def serve_file(filename):
     try:
         if filename.endswith('.html'):
-            return render_template(filename)
-        return send_from_directory('static', filename)
+            with open(filename, 'r', encoding='utf-8') as f:
+                content = f.read()
+            return render_template_string(content)
+        elif filename.endswith('.css'):
+            return send_from_directory('.', filename, mimetype='text/css')
+        elif filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp', '.ico', '.jfif')):
+            # Ищем файл в разных директориях
+            possible_paths = ['.', 'images', 'backgrounds', 'kaligraf']
+            for path in possible_paths:
+                try:
+                    if os.path.exists(os.path.join(path, filename)):
+                        return send_from_directory(path, filename)
+                except Exception:
+                    continue
+        return send_from_directory('.', filename)
     except Exception as e:
         logger.error(f"Error serving {filename}: {e}")
         return "File not found", 404
@@ -48,6 +63,5 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
     logger.info(f"Starting server on port {port}")
     logger.info(f"Working directory: {os.getcwd()}")
-    logger.info(f"Files in static: {os.listdir('static')}")
-    logger.info(f"Files in templates: {os.listdir('templates')}")
+    logger.info(f"Available files: {os.listdir('.')}")
     app.run(host='0.0.0.0', port=port) 
